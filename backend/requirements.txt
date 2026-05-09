@@ -1,0 +1,15 @@
+fastapi[all]
+sqlmodel
+alembic
+pypdf
+pymupdf
+pdfplumber
+reportlab
+pytesseract
+opencv-python-headless
+pillow
+python-multipart
+python-dotenv
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
