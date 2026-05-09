@@ -45,8 +45,10 @@ services:
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     restart: unless-stopped
+    environment:
+      - PORT=3005
     ports:
-      - 3003
+      - "3005:3005"
     depends_on:
       - backend
     logging:
