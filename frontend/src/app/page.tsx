@@ -3,24 +3,9 @@
 import { DocumentList } from '@/components/dashboard/DocumentList';
 import { UploadZone } from '@/components/dashboard/UploadZone';
 import { FileText, Shield, History, LogOut } from 'lucide-react';
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
+import React from 'react';
 export default function DashboardPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-    }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/login');
-  };
+  const handleLogout = () => {};
   return (
     <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
