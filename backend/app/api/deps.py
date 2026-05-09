@@ -1,33 +1,21 @@
-from typing import Generator, Optional
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from fastapi import Depends
 from sqlmodel import Session, select
-from ..core.config import settings
 from ..core.database import get_session
 from ..models.models import User
+from ..core.security import get_password_hash
 import uuid
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
+GUEST_USER_ID = uuid.UUID("00000000-0000-0000-0000-000000000001")
 
-def get_current_user(
-    db: Session = Depends(get_session),
-    token: str = Depends(oauth2_scheme)
-) -> User:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    
-    user = db.get(User, uuid.UUID(user_id))
+def get_current_user(db: Session = Depends(get_session)) -> User:
+    user = db.get(User, GUEST_USER_ID)
     if user is None:
-        raise credentials_exception
+        user = User(
+            id=GUEST_USER_ID,
+            email="guest@local",
+            hashed_password=get_password_hash("disabled"),
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
     return user
